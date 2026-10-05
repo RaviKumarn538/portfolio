@@ -2,10 +2,11 @@
 <html lang="en" class="is-loading">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
 <title>Ravi Kumar Nagpure — AI-Powered Full-Stack Developer</title>
 <meta name="description" content="Portfolio of Ravi Kumar Nagpure — B.Tech 3rd semester student building full-stack products with an AI-first workflow: HTML, CSS, JavaScript, Node.js, MongoDB and Java (DSA). Call +91 93019 42717 or email contact.zac201@gmail.com." />
-<meta name="theme-color" content="#F5F2EA" />
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F2EA" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0F0E13" />
 <meta name="color-scheme" content="light" />
 <link rel="canonical" href="https://ravikumarn538.github.io/portfolio/" />
 <link rel="preload" href="assets/fonts/Sora-var.woff2" as="font" type="font/woff2" crossorigin />
@@ -30,6 +31,15 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23101014'/><text x='50' y='72' font-size='58' font-family='Georgia,serif' font-style='italic' text-anchor='middle' fill='%23F5F2EA'>R</text></svg>" />
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<script>
+  /* failsafe: even if the main script fails on any device, the hero must always reveal */
+  setTimeout(function () {
+    if (document.body) document.body.classList.add("loaded");
+    document.documentElement.classList.remove("is-loading");
+    var l = document.getElementById("loader");
+    if (l) l.style.display = "none";
+  }, 4500);
+</script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Person","name":"Ravi Kumar Nagpure","jobTitle":"AI-Powered Full-Stack Developer","url":"https://ravikumarn538.github.io/portfolio/","image":"https://ravikumarn538.github.io/portfolio/assets/og.jpg","telephone":"+919301942717","email":"contact.zac201@gmail.com","sameAs":["https://github.com/RaviKumarn538","https://www.linkedin.com/in/ravi-kumar-nagpure-a548ab374"],"knowsAbout":["Node.js","Express.js","MongoDB","Gemini API","Java","Data Structures","HTML","CSS","JavaScript"],"address":{"@type":"PostalAddress","addressLocality":"Bhopal","addressCountry":"IN"}}
 </script>
@@ -78,6 +88,7 @@
     color: var(--body);
     line-height: 1.7;
     overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
     hanging-punctuation: first last;
@@ -231,7 +242,10 @@
   }
   .menu-overlay.open { clip-path: inset(0 0 0% 0); visibility: visible; transition: clip-path .85s cubic-bezier(.76,0,.24,1); }
   .menu-overlay nav { display: grid; gap: clamp(8px, 2vh, 18px); position: relative; z-index: 1; }
-  .menu-inner { width: 100%; padding-top: var(--nav-h); padding-bottom: 4vh; margin-block: auto; }
+  .menu-inner {
+    width: 100%; padding-top: var(--nav-h); padding-bottom: calc(4vh + env(safe-area-inset-bottom));
+    margin-block: auto; overscroll-behavior: contain;
+  }
   .menu-link {
     display: flex; align-items: baseline; gap: clamp(14px, 3vw, 30px);
     color: var(--paper); font-family: "Sora"; font-weight: 800;
@@ -296,7 +310,10 @@
   body.scrolled .sec-hud { opacity: 1; }
 
   /* ---------- hero ---------- */
-  .hero { padding-top: calc(var(--nav-h) + clamp(28px, 6vh, 64px)); padding-bottom: clamp(40px, 8vh, 88px); position: relative; overflow: hidden; }
+  .hero {
+    min-height: 100vh; min-height: -webkit-fill-available; min-height: 100svh;
+    padding-top: calc(var(--nav-h) + clamp(28px, 6vh, 64px)); padding-bottom: clamp(40px, 8vh, 88px); position: relative; overflow: hidden;
+  }
   .hero-blob { position: absolute; border-radius: 50%; filter: blur(110px); pointer-events: none; z-index: 0; }
   .blob-1 { width: 460px; height: 460px; background: #CDC6FF; opacity: .5; top: -12%; left: -6%; animation: drift 17s ease-in-out infinite alternate; }
   .blob-2 { width: 400px; height: 400px; background: #FFD9BE; opacity: .45; top: 26%; right: -10%; animation: drift 21s ease-in-out infinite alternate-reverse; }
@@ -729,16 +746,31 @@
     .hstat:nth-child(-n+2) { border-top: 0; }
   }
   @media (max-width: 720px) {
-    #nav { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(245,242,234,.95); }
+    nav#nav { height: calc(var(--nav-h) + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top); backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(245,242,234,.95); }
     .grain { display: none; }
     .hero-blob { display: none; }
     .hero-meta span:nth-child(3) { display: none; }
     .sec-num { display: none; }
+    section { padding: clamp(56px, 14vw, 96px) 0; }
+    #projects { padding-top: clamp(64px, 15vw, 110px); }
     .stack { gap: 14px; }
-    .stack-card { top: calc(var(--nav-h) + 14px + var(--i) * 8px); }
+    .stack-card { border-radius: 16px; top: calc(var(--nav-h) + env(safe-area-inset-top) + 14px + var(--i) * 8px); }
+    .menu-overlay, .menu-overlay.open { transition-duration: .5s; }
+    .menu-overlay.open .menu-link:nth-child(1) .mw { transition-delay: .15s; }
+    .menu-overlay.open .menu-link:nth-child(2) .mw { transition-delay: .18s; }
+    .menu-overlay.open .menu-link:nth-child(3) .mw { transition-delay: .21s; }
+    .menu-overlay.open .menu-link:nth-child(4) .mw { transition-delay: .24s; }
+    .menu-overlay.open .menu-link:nth-child(5) .mw { transition-delay: .27s; }
+    .menu-overlay.open .menu-foot { transition-delay: .3s; }
+    .menu-btn { padding: 14px 24px; }
     .process-grid { grid-template-columns: 1fr; }
     .process-step { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
     .process-step:first-child { border-top: 0; }
+  }
+
+  /* touch devices: no text selection mid-tap, no callouts */
+  @media (hover: none) {
+    nav#nav, .menu-overlay, .contact-row, .stack-card { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
   }
 
   /* ---------- hover states — desktop pointers only ---------- */
@@ -1112,7 +1144,7 @@
 
       <article class="stack-card proj-row reveal" data-id="cura" style="--i:0">
         <div class="tile tile-1">
-          <img class="tile-shot" src="assets/curaclinic.jpg" alt="CuraClinic AI landing page screenshot" loading="lazy" decoding="async" />
+          <img class="tile-shot" src="assets/curaclinic-480.jpg" srcset="assets/curaclinic-480.jpg 480w, assets/curaclinic.jpg 1280w" sizes="(max-width: 980px) 40vw, 150px" alt="CuraClinic AI landing page screenshot" loading="lazy" decoding="async" />
           <span class="proj-live">● Live</span>
         </div>
         <div>
@@ -1142,7 +1174,7 @@
 
       <article class="stack-card proj-row reveal" data-id="zac" style="--i:1">
         <div class="tile tile-2">
-          <img class="tile-shot" src="assets/zacliving.jpg" alt="Zac.Living sign-in screen screenshot" loading="lazy" decoding="async" />
+          <img class="tile-shot" src="assets/zacliving-480.jpg" srcset="assets/zacliving-480.jpg 480w, assets/zacliving.jpg 1280w" sizes="(max-width: 980px) 40vw, 150px" alt="Zac.Living sign-in screen screenshot" loading="lazy" decoding="async" />
           <span class="proj-live">● Live</span>
         </div>
         <div>
@@ -1335,9 +1367,9 @@
       if (lenis) lenis.start();
       setTimeout(() => loader.remove(), 950);
     };
-    const holdMs = 320;
+    const holdMs = matchMedia("(max-width: 720px)").matches ? 220 : 320;
     if (reduceMotion) { finish(); return; }
-    const t0 = performance.now(), dur = 2100;
+    const t0 = performance.now(), dur = matchMedia("(max-width: 720px)").matches ? 1400 : 2100;
     (function step(t) {
       const p = Math.min((t - t0) / dur, 1);
       const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
@@ -1545,11 +1577,12 @@
     list.addEventListener("mouseleave", () => gsap.to(pv, { autoAlpha: 0, scale: 0.85, duration: 0.3, ease: "power2.in" }));
   }
 
-  // ---------- scroll-driven motion ----------
+  // ---------- scroll-driven motion (reduced set on phones: native scroll + slower CPUs) ----------
   if (hasGsap && !reduceMotion) {
+    const isSmall = matchMedia("(max-width: 720px)").matches;
     window.addEventListener("load", () => ScrollTrigger.refresh());
 
-    gsap.utils.toArray("[data-parallax]").forEach(el => {
+    if (!isSmall) gsap.utils.toArray("[data-parallax]").forEach(el => {
       const s = parseFloat(el.dataset.parallax) || 8;
       const wrap = el.closest("section") || el.parentElement;
       gsap.fromTo(el, { yPercent: -s }, {
@@ -1558,20 +1591,22 @@
       });
     });
 
-    const skewTargets = document.querySelectorAll(".cap-row, .process-step");
-    if (skewTargets.length) {
-      const skewSet = gsap.quickSetter(skewTargets, "skewY", "deg");
-      const clampSkew = gsap.utils.clamp(-3.5, 3.5);
-      const proxy = { skew: 0 };
-      ScrollTrigger.create({
-        onUpdate: self => {
-          const skew = clampSkew(self.getVelocity() / -500);
-          if (Math.abs(skew) > Math.abs(proxy.skew)) {
-            proxy.skew = skew;
-            gsap.to(proxy, { skew: 0, duration: 0.9, ease: "power3", overwrite: true, onUpdate: () => skewSet(proxy.skew) });
+    if (!isSmall) {
+      const skewTargets = document.querySelectorAll(".cap-row, .process-step");
+      if (skewTargets.length) {
+        const skewSet = gsap.quickSetter(skewTargets, "skewY", "deg");
+        const clampSkew = gsap.utils.clamp(-3.5, 3.5);
+        const proxy = { skew: 0 };
+        ScrollTrigger.create({
+          onUpdate: self => {
+            const skew = clampSkew(self.getVelocity() / -500);
+            if (Math.abs(skew) > Math.abs(proxy.skew)) {
+              proxy.skew = skew;
+              gsap.to(proxy, { skew: 0, duration: 0.9, ease: "power3", overwrite: true, onUpdate: () => skewSet(proxy.skew) });
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     const track = document.getElementById("marqueeTrack");
@@ -1602,15 +1637,17 @@
       modifiers: { xPercent: x => gsap.utils.wrap(-50, 0, x) }
     });
 
-    // stacked cards bury overlay
-    const cards = gsap.utils.toArray(".stack-card");
-    cards.forEach((card, i) => {
-      if (i === cards.length - 1) return;
-      gsap.to(card, {
-        scale: 0.93, transformOrigin: "center top", "--bury": 0.38, ease: "none",
-        scrollTrigger: { trigger: cards[i + 1], start: "top bottom", end: "top top+=160", scrub: true }
+    // stacked cards bury overlay — desktop only (skips repaint cost on phones)
+    if (!isSmall) {
+      const cards = gsap.utils.toArray(".stack-card");
+      cards.forEach((card, i) => {
+        if (i === cards.length - 1) return;
+        gsap.to(card, {
+          scale: 0.93, transformOrigin: "center top", "--bury": 0.38, ease: "none",
+          scrollTrigger: { trigger: cards[i + 1], start: "top bottom", end: "top top+=160", scrub: true }
+        });
       });
-    });
+    }
 
     gsap.to(".hero-name", {
       yPercent: -10, ease: "none",
@@ -1681,6 +1718,16 @@
   const menuBtn = document.getElementById("menuBtn");
   const menuOverlay = document.getElementById("menuOverlay");
   let menuLastFocus = null;
+  // iOS Safari ignores overflow:hidden on body — position:fixed is the reliable lock
+  function lockScroll() {
+    document.body.dataset.scrollY = scrollY;
+    document.body.style.cssText = "position: fixed; width: 100%; top: " + (-scrollY) + "px;";
+  }
+  function unlockScroll() {
+    const y = parseInt(document.body.dataset.scrollY || "0", 10);
+    document.body.style.cssText = "";
+    window.scrollTo(0, y);
+  }
   function setMenu(open) {
     if (!open && !menuOverlay.classList.contains("open")) return;
     if (open) menuLastFocus = document.activeElement;
@@ -1690,6 +1737,7 @@
     menuBtn.innerHTML = open ? '<i></i>Close' : '<i></i>Menu';
     document.body.classList.toggle("menu-open", open);
     document.documentElement.classList.toggle("menu-lock", open);
+    if (open) lockScroll(); else unlockScroll();
     if (lenis) open ? lenis.stop() : lenis.start();
     if (open) setTimeout(() => menuOverlay.querySelector("a")?.focus({ preventScroll: true }), 380);
     if (!open) menuLastFocus?.focus({ preventScroll: true });
@@ -1713,6 +1761,8 @@
       setTimeout(() => scrollToTarget(id), 420);
     });
   });
+
+  addEventListener("pagehide", () => setMenu(false));
 
   // ---------- command palette ----------
   const cmdk = document.getElementById("cmdk");
@@ -1931,7 +1981,7 @@
           const d = (ev.created_at || "").slice(0, 10);
           if (d) days[d] = (days[d] || 0) + 1;
         });
-        localStorage.setItem("gh-events", JSON.stringify({ t: Date.now(), d: days }));
+        try { localStorage.setItem("gh-events", JSON.stringify({ t: Date.now(), d: days })); } catch (err) {}
       }
       let max = 1;
       const cells = [];
