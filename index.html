@@ -1075,15 +1075,17 @@
       sessionStorage.setItem("rn-loaded", "1");
       setTimeout(() => loader.remove(), 950);
     };
+    const holdMs = 320;
     if (sessionStorage.getItem("rn-loaded") === "1" || reduceMotion) { finish(); return; }
-    const t0 = performance.now(), dur = 950;
+    const t0 = performance.now(), dur = 2100;
     (function step(t) {
       const p = Math.min((t - t0) / dur, 1);
-      const v = Math.round((1 - Math.pow(1 - p, 3)) * 100);
+      const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      const v = Math.round(eased * 100);
       count.textContent = String(v).padStart(3, "0");
       bar.style.width = v + "%";
       if (p < 1) requestAnimationFrame(step);
-      else Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 900))]).then(finish);
+      else setTimeout(() => Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 700))]).then(finish), holdMs);
     })(t0);
   })();
 
