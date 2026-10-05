@@ -1072,11 +1072,10 @@
       document.body.classList.add("loaded");
       document.documentElement.classList.remove("is-loading");
       if (lenis) lenis.start();
-      sessionStorage.setItem("rn-loaded", "1");
       setTimeout(() => loader.remove(), 950);
     };
     const holdMs = 320;
-    if (sessionStorage.getItem("rn-loaded") === "1" || reduceMotion) { finish(); return; }
+    if (reduceMotion) { finish(); return; }
     const t0 = performance.now(), dur = 2100;
     (function step(t) {
       const p = Math.min((t - t0) / dur, 1);
