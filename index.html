@@ -6,7 +6,12 @@
 <title>Ravi Kumar Nagpure — AI-Powered Full-Stack Developer</title>
 <meta name="description" content="Portfolio of Ravi Kumar Nagpure — B.Tech 3rd semester student building full-stack products with an AI-first workflow: HTML, CSS, JavaScript, Node.js, MongoDB and Java (DSA). Call +91 93019 42717 or email contact.zac201@gmail.com." />
 <meta name="theme-color" content="#F7F5F0" />
+<meta name="color-scheme" content="light" />
 <link rel="canonical" href="https://ravikumarn538.github.io/portfolio/" />
+<link rel="preload" href="assets/fonts/Sora-400.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/fonts/Sora-700.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/fonts/Sora-800.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="assets/fonts/InstrumentSerif-400i.woff2" as="font" type="font/woff2" crossorigin />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Ravi Kumar Nagpure — AI-Powered Full-Stack Developer" />
 <meta property="og:description" content="B.Tech 3rd semester student shipping complete products — frontend, backend and AI — with an AI-first build workflow. Live: CuraClinic AI, Zac.Living, Real-STT." />
@@ -65,6 +70,7 @@
   h1, h2, h3, .btn, .tile-letter, .contact-value { font-family: "Sora", "Inter", sans-serif; color: var(--ink); }
   .serif { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; }
   ::selection { background: var(--accent); color: #fff; }
+  #contact ::selection, footer ::selection, .menu-overlay ::selection { background: var(--accent-soft); color: var(--ink); }
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--paper); }
   ::-webkit-scrollbar-thumb { background: var(--line-dark); border-radius: 99px; }
@@ -333,6 +339,8 @@
   /* ---------- reveal ---------- */
   .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
   .reveal.in { opacity: 1; transform: none; }
+  /* after the reveal settles, strip transitions so GSAP scrub/skew runs crisp */
+  .reveal.done { transition: none; }
 
   /* ---------- about ---------- */
   .about-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(32px, 6vw, 88px); align-items: start; }
@@ -354,7 +362,6 @@
     display: grid; grid-template-columns: 72px minmax(0, .95fr) minmax(0, 1.05fr);
     gap: clamp(16px, 3vw, 44px); align-items: center;
     padding: clamp(24px, 4vh, 38px) 6px; border-top: 1px solid var(--line);
-    transition: background .3s;
   }
   .cap-row:last-child { border-bottom: 1px solid var(--line); }
   .cap-row:hover { background: var(--white); }
@@ -377,7 +384,7 @@
   .stack-card {
     position: sticky; top: calc(var(--nav-h) + 26px + var(--i) * 16px);
     background: var(--white); border: 1px solid var(--line); border-radius: 26px;
-    box-shadow: 0 18px 44px rgba(17,17,16,.07);
+    box-shadow: 0 18px 44px rgba(17,17,16,.07); will-change: transform;
   }
   .proj-row {
     display: grid; grid-template-columns: clamp(96px, 10vw, 150px) minmax(0, 1fr) auto;
@@ -564,7 +571,7 @@
   }
 </style>
 <noscript><style>
-  #loader, .cursor-dot, .cursor-ring, .progress, .work-preview, .menu-overlay { display: none !important; }
+  #loader, .cursor-dot, .cursor-ring, .progress, .work-preview, .menu-overlay, .menu-btn { display: none !important; }
   .hline-in, [data-split] .wi, [data-split] .ch, .reveal, .fade-up { opacity: 1 !important; transform: none !important; }
   .footer-name { clip-path: none; }
   html.is-loading { overflow: auto; }
@@ -962,6 +969,7 @@
   }
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener("click", e => {
+      if (a.closest("#menuOverlay")) return; // menu links have their own handler
       const id = a.getAttribute("href");
       if (id.length > 1 && document.querySelector(id)) { e.preventDefault(); scrollToTarget(id); }
     });
@@ -1074,7 +1082,14 @@
   // ---------- reveal on scroll ----------
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+        // once the reveal settles, strip its transitions so GSAP scrub/skew stays crisp
+        if (e.target.classList.contains("stack-card") || e.target.classList.contains("cap-row")) {
+          setTimeout(() => e.target.classList.add("done"), 1300);
+        }
+      }
     });
   }, { threshold: 0.15 });
   document.querySelectorAll(".reveal, [data-split], .footer-name").forEach(el => {
@@ -1256,7 +1271,7 @@
   // ---------- text scramble on nav links ----------
   if (fineHover && !reduceMotion) {
     const CHARS = "!<>-_\\/[]{}—=+*^?#";
-    document.querySelectorAll(".nav-links a.nl, .menu-link").forEach(link => {
+    document.querySelectorAll(".menu-link").forEach(link => {
       link.addEventListener("mouseenter", () => {
         const target = link.querySelector(".mw") || link;
         const orig = target.dataset.orig || (target.dataset.orig = target.textContent);
@@ -1287,10 +1302,20 @@
     document.body.classList.toggle("menu-open", open);
     document.documentElement.classList.toggle("menu-lock", open);
     if (lenis) open ? lenis.stop() : lenis.start();
+    if (open) setTimeout(() => menuOverlay.querySelector("a")?.focus({ preventScroll: true }), 380);
     if (open) toTop.classList.remove("show");
   }
   menuBtn.addEventListener("click", () => setMenu(!menuOverlay.classList.contains("open")));
   addEventListener("keydown", e => { if (e.key === "Escape") setMenu(false); });
+  // focus trap: keep Tab cycling inside the open overlay
+  addEventListener("keydown", e => {
+    if (e.key !== "Tab" || !menuOverlay.classList.contains("open")) return;
+    const focusables = menuOverlay.querySelectorAll("a[href], button");
+    if (!focusables.length) return;
+    const first = focusables[0], last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
   menuOverlay.querySelectorAll("a[href^='#']").forEach(a => {
     a.addEventListener("click", e => {
       e.preventDefault();
@@ -1304,11 +1329,14 @@
   const nav = document.getElementById("nav");
   const progress = document.getElementById("progress");
   const toTop = document.getElementById("toTop");
-  let lastY = 0, ticking = false;
+  let lastY = 0, ticking = false, maxScroll = 0;
+  const updateMax = () => { maxScroll = document.body.scrollHeight - innerHeight; };
+  updateMax();
+  addEventListener("resize", updateMax);
+  window.addEventListener("load", updateMax);
   function onScroll() {
     const y = scrollY;
-    const max = document.body.scrollHeight - innerHeight;
-    progress.style.width = (max > 0 ? (y / max) * 100 : 0) + "%";
+    progress.style.width = (maxScroll > 0 ? Math.min(y / maxScroll, 1) * 100 : 0) + "%";
     nav.classList.toggle("nav-hidden", y > 140 && y > lastY && !document.body.classList.contains("menu-open"));
     toTop.classList.toggle("show", y > 600 && !document.body.classList.contains("menu-open"));
     lastY = y;
@@ -1341,6 +1369,11 @@
 
   // ---------- year ----------
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  // ---------- warm the work-preview images so the first hover is instant ----------
+  window.addEventListener("load", () => {
+    ["assets/curaclinic.jpg", "assets/zacliving.jpg"].forEach(src => { const i = new Image(); i.src = src; });
+  });
 </script>
 </body>
 </html>
